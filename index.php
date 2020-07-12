@@ -8,12 +8,20 @@
         <a class="nav-link" href="index.php">Home</a>
         <a class="nav-link" href="add.php">Share Your Tune</a>
         <a class="nav-link" href="view.php">View Playlists</a>
+        <a class="nav-link" href="destroy.php"> Forget Me !</a>
       </nav>
     </div>
   </header>
 
   <main role="main" class="inner cover">
-    <h1 class="cover-heading">Join The TuneShare Community.</h1>
+    <?php
+    session_start();
+    if (isset($_SESSION['name'])) {
+      echo "<h1> Hey There " . $_SESSION['name'] . "!</h1>";
+    } else {
+      echo "<h1 class='cover-heading'>Join The TuneShare Community.</h1>" ;
+    }
+?>
     <p class="lead">Need a new WFH playlist? We've got you covered. Join our community and connect with fellow music-lovers. Share your top bops and browse what others are listening too. </p>
     <!-- I had to Google what bop meant. I am very uncool -->
     <p class="lead">

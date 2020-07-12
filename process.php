@@ -8,13 +8,15 @@
         <a class="nav-link" href="index.php">Home</a>
         <a class="nav-link" href="add.php">Share Your Tune</a>
         <a class="nav-link" href="view.php">View Playlists</a>
+        <a class="nav-link" href="destroy.php"> Forget Me !</a>
       </nav>
     </div>
   </header>
 <h1> TuneShare - Share Your Fave Tunes & Join The Community </h1>
 <main>
     <?php
-
+    session_start();
+    $name = filter_input(INPUT_POST,'fname');
     $first_name = filter_input(INPUT_POST, 'fname');
     $last_name = filter_input(INPUT_POST, 'lname');
     $genre = filter_input(INPUT_POST, 'genre');
@@ -29,15 +31,21 @@
     $photo_size = $_FILES['photo']['size'];
     $id = null;
     $id = filter_input(INPUT_POST, 'user_id');
-
+    $_SESSION['name'] = $name;
     //set up a flag variable
     $ok = true;
 
+if(isset($_SESSION['name'])) {
+  echo "<p> Thank you  " . $_SESSION['name']. "!";
+}
+else {
+    echo "<p> Thank you ";
+}
     //define image constants
     define('UPLOADPATH', 'images/');
     define('MAXFILESIZE', 32786); //32 KB
 
-    //form validation 
+    //form validation
     // first name and last name not empty
 
     if (empty($first_name) || empty($last_name)) {
@@ -75,9 +83,9 @@
         $ok = false;
     }
 
-    // check photo is the right size and type 
+    // check photo is the right size and type
     if ((($photo_type !== 'image/gif') || ($photo_type !== 'image/jpeg') || ($photo_type !== 'image/jpg') || ($photo_type !== 'image/png')) && ($photo_size < 0) && ($photo_size >= MAXFILESIZE)) {
-        //making sure no upload errors 
+        //making sure no upload errors
         if ($_FILES['photo']['error'] !== 0) {
             $ok = false;
             echo "Please submit a photo that is a jpg, png or gif and less than 32kb";
@@ -91,18 +99,18 @@
             move_uploaded_file($_FILES['photo']['tmp_name'], $target);
             // connecting to the database
             require_once('connect.php');
-            //if we have an id, that means we are updating 
+            //if we have an id, that means we are updating
             if (!empty($id)) {
                 $sql = "UPDATE songs SET first_name = :firstname, last_name = :lastname, genre = :genre, location = :location, email = :email, age = :age, favsong = :favsong, link = :link,  photo = :photo WHERE user_id = :user_id;";
             } else {
-                //this is a new tune we are adding to our app 
-                // set up an SQL command to save the info 
+                //this is a new tune we are adding to our app
+                // set up an SQL command to save the info
                 $sql = "INSERT INTO songs (first_name, last_name, genre, location, email, age, favsong, link, photo) VALUES (:firstname, :lastname, :genre, :location, :email, :age, :favsong,:link, :photo)";
             }
             // Call the prepare method of the PDO object to prepare the query and return a PDOstatement object
             $statement = $db->prepare($sql);
 
-            //fill the placeholders with the 8 input variables using bindParam method 
+            //fill the placeholders with the 8 input variables using bindParam method
             $statement->bindParam(':firstname', $first_name);
             $statement->bindParam(':lastname', $last_name);
             $statement->bindParam(':genre', $genre);
@@ -113,7 +121,7 @@
             $statement->bindParam(':photo', $photo);
             $statement->bindParam(':link', $link);
 
-            //if we are updating, bind :user_id 
+            //if we are updating, bind :user_id
             if (!empty($id)) {
                 $statement->bindParam(':user_id', $id);
             }
@@ -132,8 +140,7 @@
             echo "<p> Sorry! We weren't able to process your submission at this time. We've alerted our admins and will let you know when things are fixed! </p> ";
             echo $error_message;
             echo " $id $first_name $last_name $genre $location $email $age $fav_song $photo";
-            //email app admin with error
-            mail('jessicagilfillan@gmail.com', 'TuneShare Error', 'Error :' . $error_message);
+
         }
     }
     ?>

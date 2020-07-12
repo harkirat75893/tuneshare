@@ -18,7 +18,9 @@ SET time_zone = "+00:00";
 
 --
 -- Database: `tuneshare`
---
+DROP DATABASE IF EXISTS tuneshare;
+CREATE DATABASE tuneshare;
+USE tuneshare;
 
 -- --------------------------------------------------------
 
@@ -34,8 +36,10 @@ CREATE TABLE `songs` (
   `location` varchar(100) NOT NULL,
   `email` varchar(100) NOT NULL,
   `age` int(10) NOT NULL,
-  `favsong` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `favsong` varchar(100) NOT NULL,
+  `link` varchar(100) NOT NULL,
+  `photo` varchar(200) NOT NULL
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `songs`
